@@ -1,0 +1,14 @@
+[Unit]
+Description=galtubot
+
+[Service]
+ExecStart=/opt/galtubot/index.js
+Restart=always
+User=galtubot
+Group=galtubot
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/opt/galtubot
+
+[Install]
+WantedBy=multi-user.target
