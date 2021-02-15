@@ -11,7 +11,7 @@ const DiscordChannelSync = require('./discord-channel-sync');
 
 let discordTargetChannels = [];
 let syncServerList = (logMembership) => {
-	discordTargetChannels = DiscordChannelSync.getChannelList(client, config.discord_announce_channel, logMembership);
+	discordTargetChannels = DiscordChannelSync.getChannelList(client, config.discord_channel_name, logMembership);
 };
 
 client.on('ready', () => {
