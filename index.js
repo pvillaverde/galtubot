@@ -9,10 +9,30 @@ const moment = require('moment');
 const GoogleApi = require('./google-api');
 const DiscordChannelSync = require('./discord-channel-sync');
 
+let discordTargetChannels = [];
+let syncServerList = (logMembership) => {
+	discordTargetChannels = DiscordChannelSync.getChannelList(client, config.discord_announce_channel, logMembership);
+};
+
 client.on('ready', () => {
 	console.log('[Discord]', `BoT listo, iniciou sesión como ${client.user.tag}.`);
 
+	// Init list of connected servers, and determine which channels we are announcing to
+	syncServerList(true);
+	// Begin Twitch monitoring
 	YoutubeMonitor.start();
+});
+
+client.on('guildCreate', (guild) => {
+	console.log(`[Discord]`, `Joined new server: ${guild.name}`);
+
+	syncServerList(false);
+});
+
+client.on('guildDelete', (guild) => {
+	console.log(`[Discord]`, `Removed from a server: ${guild.name}`);
+
+	syncServerList(false);
 });
 
 class YoutubeMonitor {
@@ -36,7 +56,6 @@ class YoutubeMonitor {
 				// Enforce minimum poll interval to help avoid rate limits
 				checkIntervalMs = this.MIN_POLL_INTERVAL_MS;
 			}
-			this.targetChannels = DiscordChannelSync.getChannelList(client, config.discord_channel_name, true);
 
 			setInterval(() => {
 				this.refresh('Actualización periódica');
@@ -119,7 +138,7 @@ class YoutubeMonitor {
 						.replace(/{author}/g, lastVideoData.author)
 						.replace(/{title}/g, Discord.Util.escapeMarkdown(lastVideoData.title))
 						.replace(/{url}/g, lastVideoData.link);
-					this.targetChannels.forEach((discordChannel) => {
+					discordTargetChannels.forEach((discordChannel) => {
 						if (!discordChannel) return;
 						discordChannel.send(message);
 					});
@@ -146,7 +165,7 @@ class YoutubeMonitor {
 						.replace(/{author}/g, video.snippet.channelTitle)
 						.replace(/{title}/g, Discord.Util.escapeMarkdown(video.snippet.title))
 						.replace(/{url}/g, link);
-					this.targetChannels.forEach((discordChannel) => {
+					discordTargetChannels.forEach((discordChannel) => {
 						if (!discordChannel) return;
 						discordChannel.send(message);
 					});

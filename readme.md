@@ -1,6 +1,8 @@
 # Galtubot
 
-🤖 **Un robot sinxelo e que se pode personalizar. Anuncia aos novos vídeos da comunidade de Youtube en galego.**
+🤖 **Un robot sinxelo para o discord que anuncia os vídeos da comunidade de Youtube en galego.**
+
+![Galtubot As Canles de YT](https://i.imgur.com/EcH4j7X.png)
 
 ## Táboa de contidos
 
@@ -30,7 +32,7 @@ Tes dúas opcións:
 
 1. Podes [invitar ó bot "As Canles do YT"](https://discord.com/oauth2/authorize?client_id=805443544138907689&scope=bot) ó teu servidor de discord para recibir as notificacións da comunidade de Youtube en Galego (Tes que ter unha canle no servidor co nome `🟥youtube-galego`). Este bot utiliza a lista de canles recopilada por Fran, de [A Lobeira Today](https://www.youtube.com/channel/UCZZTH6dVk9k_ah6OpZ-w7ZA). Se botas en falta os vídeos novos dalgunha canle, ponte en contacto conmigo ou con Fran para engadila á lista.
 
-2. Ou, podes facer unha copia propia seguindo as instruccións de debaixo e personalizalo como che apeteza.
+2. Ou, podes facer unha copia propia seguindo as instruccións de abaixo e personalizalo como che apeteza.
 
 ## Instalación e configuración
 
@@ -122,7 +124,7 @@ Cambia `ID_CLIENTE_ROBOT` na URL pola ID de cliente da túa aplicación de Disco
 
 O Bot poderíase configurar para utilizar a propia API de google, mediante credenciais habilitadas para Youtube, pero para un volume tan amplo coma as canlees de Youtube en galego, só se podería facer a consulta 1-2 veces o día.
 
-Para poder facelo máis veces, o que fai o bot e consultar o RSS de cada canle, que non ten límite de uso. O principal inconvinte disto é que as subidas de vídeo en modo "Estrea", é dicir, que se publican despois da subida, saen ó momento, cando aínda non se poden ver. Non obstante, como a idea é dar a coñecer novas canles a comunidade, e ameirande parte das canles suben de xeito inmediato o contido, decidiuse utilizar este método para que os vídeos vaian chegando ó discord aos poucos, e non 50 vídeos á vez.
+Para poder facelo máis veces, o que fai o bot é consultar o RSS de cada canle, que non ten límite de uso. O principal inconvinte disto é que **as subidas de vídeo en modo "Estrea", é dicir, que se publican despois da subida, saen ó momento, cando aínda non se poden ver**. Non obstante, como a idea é dar a coñecer novas canles a comunidade, e ameirande parte das canles suben de xeito inmediato o contido, decidiuse utilizar este método para que os vídeos vaian chegando ó discord aos poucos, e non 50 vídeos á vez.
 
 ## Creditos
 
