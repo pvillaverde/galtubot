@@ -2,6 +2,24 @@
 
 🤖 **Un robot sinxelo e que se pode personalizar. Anuncia aos novos vídeos da comunidade de Youtube en galego.**
 
+## Táboa de contidos
+
+   * [Galtubot](#galtubot)
+      * [Características](#características)
+      * [Cómo uso o robot?](#cómo-uso-o-robot)
+      * [Instalación e configuración](#instalación-e-configuración)
+         * [Prerequisitos](#prerequisitos)
+         * [Instalación](#instalación)
+         * [Conseguindo os tokens requeridos](#conseguindo-os-tokens-requeridos)
+            * [Aplicación do Bot de discord](#aplicación-do-bot-de-discord)
+         * [Google Sheets API](#google-sheets-api)
+         * [Configuración](#configuración)
+         * [Arrincando galtubot](#arrincando-galtubot)
+         * [Configurar galtubot como servizo](#configurar-galtubot-como-servizo)
+         * [Invitando o teu galtubot](#invitando-o-teu-galtubot)
+      * [Problemas coñecidos](#problemas-coñecidos)
+      * [Creditos](#creditos)
+
 ## Características
 
 - 📢 Comproba periódicamente as canles de Youtube indicadas nun arquivo de Google Drive e envía notificacións nunha canle de Discord.
