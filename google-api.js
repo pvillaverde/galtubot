@@ -3,8 +3,9 @@ const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
 const config = require('./config.js');
+const { version } = require('moment');
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/youtube.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -13,12 +14,12 @@ const TOKEN_PATH = 'token.json';
 /**
  * Google Sheets Api Helper.
  */
-class GoogleSheetsApi {
+class GoogleApi {
 	static handleApiError(error, message) {
 		if (message) {
-			console.error('[GoogleSheetsAPI]', 'API request failed with error:', error, message);
+			console.error('[GoogleApi]', 'API request failed with error:', error, message);
 		} else {
-			console.error('[GoogleSheetsAPI]', 'API request failed with error:', error);
+			console.error('[GoogleApi]', 'API request failed with error:', error);
 		}
 	}
 
@@ -75,11 +76,10 @@ class GoogleSheetsApi {
 		});
 	}
 	/**
-	 * Prints the names and majors of students in a sample spreadsheet:
-	 * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-	 * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
+	 * Recupera as filas dunha folla de cálculo de google
+	 * @param spreadsheet A configuración de spreadsheet indicada na configuración
 	 */
-	static fetchData(spreadSheet) {
+	static fetchSpreadsheetData(spreadSheet) {
 		return this.authorize().then(
 			(auth) =>
 				new Promise((resolve, reject) => {
@@ -103,11 +103,35 @@ class GoogleSheetsApi {
 							});
 							resolve(mappedRows);
 						} else {
-							console.log('No data found.');
-							this.handleApiError(err, 'No data found');
+							this.handleApiError(err, '[Sheets] No data found');
 							reject(err);
 						}
 					});
+				})
+		);
+	}
+	/**
+	 * Recupera o listado dos últimos 10 vídeos da canle indicada de youtube.
+	 * @param channelId A ID da canle de youtube
+	 */
+	static fetchLatestVideos(channelId) {
+		return this.authorize().then(
+			(auth) =>
+				new Promise((resolve, reject) => {
+					const youtube = google.youtube({ version: 'v3', auth });
+					youtube.search
+						.list({
+							part: ['snippet'],
+							channelId,
+							maxResults: 10,
+							order: 'date',
+							type: ['video'],
+						})
+						.then((response) => resolve(response))
+						.catch((error) => {
+							this.handleApiError(error, '[Youtube] No data found');
+							reject(error);
+						});
 				})
 		);
 	}
@@ -117,4 +141,4 @@ class GoogleSheetsApi {
 	}
 }
 
-module.exports = GoogleSheetsApi;
+module.exports = GoogleApi;

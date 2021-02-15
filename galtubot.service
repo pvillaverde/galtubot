@@ -2,7 +2,7 @@
 Description=galtubot
 
 [Service]
-ExecStart=/opt/galtubot/index.js
+ExecStart=/bin/node /opt/galtubot/index.js
 Restart=always
 User=galtubot
 Group=galtubot

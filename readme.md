@@ -10,7 +10,7 @@
 
 Tes dúas opcións:
 
-1. Podes [invitar ó bot de Youtube en Galego](https://discord.com/oauth2/authorize?client_id=805443544138907689&scope=bot) ó teu servidor de discord para recibir as notificacións da comunidade de Youtube en Galego (Tes que ter unha canle no servidor co nome `🟥youtube-galego`). Este bot é o que mantén a comunidade galega actualizando a lista de canles de Youtube segundo se vaian incorporando.
+1. Podes [invitar ó bot "As Canles do YT"](https://discord.com/oauth2/authorize?client_id=805443544138907689&scope=bot) ó teu servidor de discord para recibir as notificacións da comunidade de Youtube en Galego (Tes que ter unha canle no servidor co nome `🟥youtube-galego`). Este bot utiliza a lista de canles recopilada por Fran, de [A Lobeira Today](https://www.youtube.com/channel/UCZZTH6dVk9k_ah6OpZ-w7ZA). Se botas en falta os vídeos novos dalgunha canle, ponte en contacto conmigo ou con Fran para engadila á lista.
 
 2. Ou, podes facer unha copia propia seguindo as instruccións de debaixo e personalizalo como che apeteza.
 
@@ -65,6 +65,7 @@ module.exports = {
 	discord_channel_name: '🟥youtube-galego', // Nome da canle de Discord
 	messageTemplate: 'Boas rapazada!\n\n**{author}** acaba de subir o vídeo **{title}**!\n{url}', // Mensaxe plantilla
 	watchInterval: 15 * 60 * 1000, // Intervalo de refresco en ms
+	useYoutubeAPI: false, // Se é true, ter coidado cos intervalos, unha vez o día recomendado para non pasar da cuota.
 	google_spreadsheet: {
 		id: '1f3N-0N8b2ZoYjlH86ktKGHcznF-PH27SsIj0M_xYUhk', // Id da folla de google
 		range: 'Youtube!A2:B', // Táboa e rango de celdas
@@ -99,7 +100,15 @@ Envía a seguinte ligazón o administrador do servidor de Discord no que queiras
 
 Cambia `ID_CLIENTE_ROBOT` na URL pola ID de cliente da túa aplicación de Discord, que podes atopala nos detallees da aplicación.
 
+## Problemas coñecidos
+
+O Bot poderíase configurar para utilizar a propia API de google, mediante credenciais habilitadas para Youtube, pero para un volume tan amplo coma as canlees de Youtube en galego, só se podería facer a consulta 1-2 veces o día.
+
+Para poder facelo máis veces, o que fai o bot e consultar o RSS de cada canle, que non ten límite de uso. O principal inconvinte disto é que as subidas de vídeo en modo "Estrea", é dicir, que se publican despois da subida, saen ó momento, cando aínda non se poden ver. Non obstante, como a idea é dar a coñecer novas canles a comunidade, e ameirande parte das canles suben de xeito inmediato o contido, decidiuse utilizar este método para que os vídeos vaian chegando ó discord aos poucos, e non 50 vídeos á vez.
+
 ## Creditos
+
+O descubrimento e recollida de todas as canles galegas é grazas a Fran, de [A Lobeira Today](https://www.youtube.com/channel/UCZZTH6dVk9k_ah6OpZ-w7ZA)
 
 Baseado tanto no Timbot utilizado para o bot de [twitch en galego](https://github.com/pvillaverde/twitchgalegobot) coma no [youtube-notification-bot](https://github.com/Snowflake107/youtube-notification-bot)
 

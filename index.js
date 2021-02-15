@@ -3,9 +3,10 @@ const DATABASE = require('quick.db');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const rssParser = new (require('rss-parser'))();
+const sequential = require('promise-sequential');
 const config = require('./config.js');
 const moment = require('moment');
-const GoogleSheetsApi = require('./google-sheets');
+const GoogleApi = require('./google-api');
 const DiscordChannelSync = require('./discord-channel-sync');
 
 client.on('ready', () => {
@@ -20,6 +21,7 @@ class YoutubeMonitor {
 
 		this._lastUserRefresh = null;
 		this._pendingUserRefresh = false;
+		this.queries = 0;
 	}
 
 	static start() {
@@ -34,8 +36,7 @@ class YoutubeMonitor {
 				// Enforce minimum poll interval to help avoid rate limits
 				checkIntervalMs = this.MIN_POLL_INTERVAL_MS;
 			}
-
-			this.targetChannels = DiscordChannelSync.getChannelList(client, config.discord_channel_name, false);
+			this.targetChannels = DiscordChannelSync.getChannelList(client, config.discord_channel_name, true);
 
 			setInterval(() => {
 				this.refresh('Actualización periódica');
@@ -57,7 +58,7 @@ class YoutubeMonitor {
 	}
 
 	static getChannels() {
-		return GoogleSheetsApi.fetchData(config.google_spreadsheet)
+		return GoogleApi.fetchSpreadsheetData(config.google_spreadsheet)
 			.then((channels) => {
 				if (!channels.length) {
 					throw console.warn('[YoutubeMonitor]', 'Non se atoparon canles');
@@ -88,21 +89,32 @@ class YoutubeMonitor {
 			});
 		}
 
-		// Refresh all games if needed
+		// Refresh all videos if needed
 		if (!this._pendingUserRefresh) {
-			this.channels.forEach((channel) => this.checkChannelVideos(channel));
+			this.queries = 0;
+			const promises = this.channels.map((channel) => () => this.checkChannelVideos(channel));
+			sequential(promises).then((res) => console.log('[YoutubeMonitor] Actualizaronse todas.'));
 		}
 	}
 
 	static checkChannelVideos(channel) {
 		if (DATABASE.fetch(channel.id) === null) DATABASE.set(channel.id, []);
-		rssParser
+		this.queries++;
+		if (config.useYoutubeAPI) {
+			this.checkChannelVideosByAPI(channel);
+		} else {
+			this.checkChannelVideosByRSS(channel);
+		}
+	}
+	static checkChannelVideosByRSS(channel) {
+		return rssParser
 			.parseURL(`https://www.youtube.com/feeds/videos.xml?channel_id=${channel.id}`)
 			.then((data) => {
-				if (DATABASE.fetch(channel.id).includes(data.items[0].link)) return;
+				const lastVideoData = data.items[0];
+				if (!lastVideoData) throw 'Non hai ningún vídeo.';
+				if (DATABASE.fetch(channel.id).includes(lastVideoData.link)) return;
 				else {
-					const lastVideoData = data.items[0];
-					DATABASE.push(channel.id, data.items[0].link);
+					DATABASE.push(channel.id, lastVideoData.link);
 					let message = config.messageTemplate
 						.replace(/{author}/g, lastVideoData.author)
 						.replace(/{title}/g, Discord.Util.escapeMarkdown(lastVideoData.title))
@@ -114,7 +126,38 @@ class YoutubeMonitor {
 				}
 			})
 			.catch((error) => {
-				console.error('[YoutubeMonitor]', `Non se puideron actualizar a canle ${channel.name}`, error);
+				if (error.stack && error.stack.match(/404/)) {
+					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name} - ${channel.id}`);
+				} else {
+					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name}`, error);
+				}
+			});
+	}
+	static checkChannelVideosByAPI(channel) {
+		return GoogleApi.fetchLatestVideos(channel.id)
+			.then((response) => {
+				if (!response.data.items || !response.data.items.length) throw 'Non hai ningún vídeo';
+				response.data.items.forEach((video) => {
+					const link = `https://www.youtube.com/watch?v=${video.id.videoId}`;
+					if (DATABASE.fetch(channel.id).includes(link)) return;
+					if (video.snippet.liveBroadcastContent != 'none') return; // video ainda non publicado (estreas, directos)
+					DATABASE.push(channel.id, link);
+					let message = config.messageTemplate
+						.replace(/{author}/g, video.snippet.channelTitle)
+						.replace(/{title}/g, Discord.Util.escapeMarkdown(video.snippet.title))
+						.replace(/{url}/g, link);
+					this.targetChannels.forEach((discordChannel) => {
+						if (!discordChannel) return;
+						discordChannel.send(message);
+					});
+				});
+			})
+			.catch((error) => {
+				if (error.stack && error.stack.match(/404/)) {
+					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name} - ${channel.id}`);
+				} else {
+					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name}`, error);
+				}
 			});
 	}
 }
