@@ -26,6 +26,13 @@ client.on('ready', () => {
 client.on('guildCreate', (guild) => {
 	console.log(`[Discord]`, `Joined new server: ${guild.name}`);
 
+	let newChannel = guild.channels.cache.find((g) => g.name === config.discord_channel_name);
+	if(!newChannel) {
+		console.log(`[Discord]`, `Channel not found on new server: ${guild.name}`);
+	}else{
+		newChannel.send('Configuración lista! En canto haxa novos vídeos enviarei as notificacións nesta canle!');
+	}
+
 	syncServerList(false);
 });
 
