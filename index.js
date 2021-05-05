@@ -23,14 +23,17 @@ client.on('ready', () => {
 	YoutubeMonitor.start();
 });
 
-client.on('guildCreate', (guild) => {
+client.on('guildCreate', async (guild) => {
 	console.log(`[Discord]`, `Joined new server: ${guild.name}`);
-
 	let newChannel = guild.channels.cache.find((g) => g.name === config.discord_channel_name);
-	if(!newChannel) {
+	if (!newChannel) {
 		console.log(`[Discord]`, `Channel not found on new server: ${guild.name}`);
-	}else{
-		newChannel.send('Configuración lista! En canto haxa novos vídeos enviarei as notificacións nesta canle!');
+	} else {
+		try {
+			await newChannel.send('Configuración lista! En canto haxa novos vídeos enviarei as notificacións nesta canle!');
+		} catch (error) {
+			guild.owner.user.send('Ocurriu un erro ao configurar o bot, revisa que ten os permisos para escribir na canle.');
+		}
 	}
 
 	syncServerList(false);
