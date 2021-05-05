@@ -7,6 +7,7 @@
 ## Táboa de contidos
 
    * [Galtubot](#galtubot)
+      * [Táboa de contidos](#táboa-de-contidos)
       * [Características](#características)
       * [Cómo uso o robot?](#cómo-uso-o-robot)
       * [Instalación e configuración](#instalación-e-configuración)
@@ -18,9 +19,12 @@
          * [Configuración](#configuración)
          * [Arrincando galtubot](#arrincando-galtubot)
          * [Configurar galtubot como servizo](#configurar-galtubot-como-servizo)
+         * [Configurar Galtubot como docker](#configurar-galtubot-como-docker)
          * [Invitando o teu galtubot](#invitando-o-teu-galtubot)
       * [Problemas coñecidos](#problemas-coñecidos)
       * [Creditos](#creditos)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
 ## Características
 
@@ -111,6 +115,13 @@ Opcionalmente, pódese configurar coma servizo nun servidor linux para que estea
     chown galtubot:galtubot /opt/galtubot -R
     systemctl enable galtubot
     systemctl start galtubot
+### Configurar Galtubot como docker
+
+Tamén podes configurar o servizo con un contenedor docker, para iso, constrúe a imaxe e lanza o contenedor cos seguintes comandos:
+   ```sh
+   docker build -t pvillaverde/galtubot .
+   docker run --name galtubot  -d pvillaverde/galtubot
+   ```
 
 ### Invitando o teu galtubot
 
