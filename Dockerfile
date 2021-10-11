@@ -5,7 +5,7 @@ MAINTAINER Pablo Villaverde <https://github.com/pvillaverde>
 ## This forces Docker not to use cache when we change our dependencies
 ADD package*.json /tmp/
 RUN cd /tmp && apk add --no-cache --virtual .gyp python make g++ && npm install && apk del .gyp
-RUN mkdir -p /opt/galtubot && cp -a /tmp/node_modules /opt/app
+RUN mkdir -p /opt/galtubot && cp -a /tmp/node_modules /opt/galtubot
 ## Now we copy our App source code, having the dependencies previously cached if possible.
 WORKDIR /opt/galtubot
 ADD . /opt/galtubot
