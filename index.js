@@ -8,6 +8,7 @@ const config = require('./config.js');
 const moment = require('moment');
 const GoogleApi = require('./google-api');
 const DiscordChannelSync = require('./discord-channel-sync');
+const { TwitterApi } = require('twitter-api-v2');
 
 let discordTargetChannels = [];
 let syncServerList = (logMembership) => {
@@ -188,6 +189,26 @@ class YoutubeMonitor {
 					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name}`, error);
 				}
 			});
+	}
+	static async sendTweet(channel, videoTitle, videoLink) {
+		if(!config.twitter) return;
+		const client = new TwitterApi({
+			appKey: config.twitter.appKey,
+			appSecret: config.twitter.appSecret,
+			accessToken: config.twitter.accessToken,
+			accessSecret: config.twitter.accessSecret,
+		});
+		let message = config.twitter.messageTemplate
+			.replace(/{channelName}/g, channel.name)
+			.replace(/{twitterUser}/g, channel.twitter.startsWith('@') ? `(${channel.twitter})` : '')
+			.replace(/{title}/g, Discord.Util.escapeMarkdown(videoTitle))
+			.replace(/{url}/g, videoLink);
+		try {
+			var success = await client.v2.tweet(message);
+			console.log(success);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 }
 

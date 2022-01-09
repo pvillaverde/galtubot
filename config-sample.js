@@ -6,8 +6,15 @@ module.exports = {
 	useYoutubeAPI: false, // Se é true, ter coidado cos intervalos, unha vez o día recomendado para non pasar da cuota.
 	google_spreadsheet: {
 		id: '1f3N-0N8b2ZoYjlH86ktKGHcznF-PH27SsIj0M_xYUhk', // Id da folla de google
-		range: 'Youtube!A2:B', // Táboa e rango de celdas
-		headers: 'id,name', // Cabeceiras das columnas
+		range: 'Youtube!A2:C', // Táboa e rango de celdas
+		headers: 'id,name,twitter', // Cabeceiras das columnas
 	},
 	google_credentials: {},
+	/* twitter: {
+		appKey: '',
+		appSecret:'',
+		accessToken: '',
+		accessSecret: '',
+		messageTemplate: '(🤖🤖Isto é unha proba dun bot, sorry 🤖🤖)\n\n{channelName} {twitterUser} acaba de publicar o vídeo "{title}" no Youtube. Dálle unha ollada en\n{url}',
+	}, */
 };
