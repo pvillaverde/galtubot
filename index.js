@@ -149,6 +149,7 @@ class YoutubeMonitor {
 						.replace(/{author}/g, lastVideoData.author)
 						.replace(/{title}/g, Discord.Util.escapeMarkdown(lastVideoData.title))
 						.replace(/{url}/g, lastVideoData.link);
+					this.sendTweet(channel,lastVideoData.title, lastVideoData.link);
 					discordTargetChannels.forEach((discordChannel) => {
 						if (!discordChannel) return;
 						discordChannel.send(message);
@@ -176,6 +177,7 @@ class YoutubeMonitor {
 						.replace(/{author}/g, video.snippet.channelTitle)
 						.replace(/{title}/g, Discord.Util.escapeMarkdown(video.snippet.title))
 						.replace(/{url}/g, link);
+					this.sendTweet(channel, video.snippet.title, link);
 					discordTargetChannels.forEach((discordChannel) => {
 						if (!discordChannel) return;
 						discordChannel.send(message);
@@ -191,7 +193,7 @@ class YoutubeMonitor {
 			});
 	}
 	static async sendTweet(channel, videoTitle, videoLink) {
-		if(!config.twitter) return;
+		if (!config.twitter) return;
 		const client = new TwitterApi({
 			appKey: config.twitter.appKey,
 			appSecret: config.twitter.appSecret,
