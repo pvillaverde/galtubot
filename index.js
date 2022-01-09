@@ -202,14 +202,14 @@ class YoutubeMonitor {
 		});
 		let message = config.twitter.messageTemplate
 			.replace(/{channelName}/g, channel.name)
-			.replace(/{twitterUser}/g, channel.twitter.startsWith('@') ? `(${channel.twitter})` : '')
+			.replace(/{twitterUser}/g, channel.twitter && channel.twitter.startsWith('@') ? `(${channel.twitter})` : '')
 			.replace(/{title}/g, Discord.Util.escapeMarkdown(videoTitle))
 			.replace(/{url}/g, videoLink);
 		try {
 			var success = await client.v2.tweet(message);
-			console.log(success);
+			console.log('[YoutubeMonitor-Twitter]', `Enviouse actualización a twitter da canle: ${channel.name}`);
 		} catch (error) {
-			console.error(error);
+			console.error('[YoutubeMonitor-Twitter]', `Non se puido enviar o tweet da canle ${channel.name}`, error);
 		}
 	}
 }
