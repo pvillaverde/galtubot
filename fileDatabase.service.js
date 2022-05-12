@@ -3,7 +3,7 @@ const fs = require('fs');
 
 class FileDatabaseService {
 	constructor(name) {
-		this.basePath = `app/data/${name}`;
+		this.basePath = `data/${name}`;
 
 		if (!fs.existsSync(this.basePath)) {
 			console.log('[MiniDb]', 'Create base directory:', this.basePath);
