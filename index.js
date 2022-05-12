@@ -9,6 +9,7 @@ const moment = require('moment');
 const GoogleApi = require('./google-api');
 const DiscordChannelSync = require('./discord-channel-sync');
 const { TwitterApi } = require('twitter-api-v2');
+const FileDatabaseService = require('./fileDatabase.service.js');
 
 let discordTargetChannels = [];
 let syncServerList = (logMembership) => {
@@ -97,6 +98,7 @@ class YoutubeMonitor {
 			})
 			.catch((error) => {
 				console.error('[YoutubeMonitor]', 'Non se puideron actualizar as canles', error);
+				new FileDatabaseService('live-messages').put('last-error', moment());
 				return this.channels;
 			});
 	}
@@ -162,6 +164,7 @@ class YoutubeMonitor {
 				} else {
 					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name}`, error);
 				}
+				new FileDatabaseService('live-messages').put('last-error', moment());
 			});
 	}
 	static checkChannelVideosByAPI(channel) {
@@ -190,6 +193,7 @@ class YoutubeMonitor {
 				} else {
 					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name}`, error);
 				}
+				new FileDatabaseService('live-messages').put('last-error', moment());
 			});
 	}
 	static async sendTweet(channel, videoTitle, videoLink) {
@@ -209,6 +213,7 @@ class YoutubeMonitor {
 			var success = await client.v2.tweet(message);
 			console.log('[YoutubeMonitor-Twitter]', `Enviouse actualización a twitter da canle: ${channel.name}`);
 		} catch (error) {
+			new FileDatabaseService('live-messages').put('last-error', moment());
 			console.error('[YoutubeMonitor-Twitter]', `Non se puido enviar o tweet da canle ${channel.name}`, error);
 		}
 	}

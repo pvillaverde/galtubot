@@ -3,6 +3,8 @@ const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
 const config = require('./config.js');
+const moment = require('moment');
+const FileDatabaseService = require('./fileDatabase.service.js');
 const { version } = require('moment');
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/youtube.readonly'];
@@ -21,6 +23,7 @@ class GoogleApi {
 		} else {
 			console.error('[GoogleApi]', 'API request failed with error:', error);
 		}
+		new FileDatabaseService('live-messages').put('last-error', moment());
 	}
 
 	/**
