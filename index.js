@@ -160,11 +160,11 @@ class YoutubeMonitor {
 			})
 			.catch((error) => {
 				if (error.stack && error.stack.match(/404/)) {
+					new FileDatabaseService('live-messages').put('last-error', moment());
 					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name} - ${channel.id}`);
 				} else {
 					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name}`, error);
 				}
-				new FileDatabaseService('live-messages').put('last-error', moment());
 			});
 	}
 	static checkChannelVideosByAPI(channel) {
@@ -189,11 +189,11 @@ class YoutubeMonitor {
 			})
 			.catch((error) => {
 				if (error.stack && error.stack.match(/404/)) {
+					new FileDatabaseService('live-messages').put('last-error', moment());
 					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name} - ${channel.id}`);
 				} else {
 					console.error('[YoutubeMonitor]', `Non se puido actualizar a canle ${channel.name}`, error);
 				}
-				new FileDatabaseService('live-messages').put('last-error', moment());
 			});
 	}
 	static async sendTweet(channel, videoTitle, videoLink) {
