@@ -17,4 +17,11 @@ module.exports = {
 		accessSecret: '',
 		messageTemplate: '(🤖🤖Isto é unha proba dun bot, sorry 🤖🤖)\n\n{channelName} {twitterUser} acaba de publicar o vídeo "{title}" no Youtube. Dálle unha ollada en\n{url}',
 	}, */
+	
+	/* mastodon: {
+		access_token: '',
+		timeout_ms: 60 * 100,
+		api_url: 'https://botsin.space/api/v1/',
+		messageTemplate: '🤖 {channelName} acaba de publicar o vídeo "{title}" no #GalegoTube #Youtubeiras. Dálle unha ollada en\n{url}',
+	}, */
 };

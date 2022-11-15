@@ -9,6 +9,7 @@ const moment = require('moment');
 const GoogleApi = require('./google-api');
 const DiscordChannelSync = require('./discord-channel-sync');
 const { TwitterApi } = require('twitter-api-v2');
+const Mastodon = require('mastodon-api');
 const FileDatabaseService = require('./fileDatabase.service.js');
 
 let discordTargetChannels = [];
@@ -180,6 +181,7 @@ class YoutubeMonitor {
 						.replace(/{title}/g, Discord.Util.escapeMarkdown(video.snippet.title))
 						.replace(/{url}/g, link);
 					this.sendTweet(channel, video.snippet.title, link);
+					this.sendToot(channel, video.snippet.title, link);
 					discordTargetChannels.forEach((discordChannel) => {
 						if (!discordChannel) return;
 						discordChannel.send(message);
@@ -213,6 +215,25 @@ class YoutubeMonitor {
 		} catch (error) {
 			new FileDatabaseService('live-messages').put('last-error', moment());
 			console.error('[YoutubeMonitor-Twitter]', `Non se puido enviar o tweet da canle ${channel.name}`, error);
+		}
+	}
+	static async sendToot(channel, videoTitle, videoLink) {
+		if (!config.mastodon) return;
+		const client = new Mastodon({
+			access_token: config.mastodon.access_token,
+			timeout_ms: config.mastodon.timeout_ms,
+			api_url: config.mastodon.api_url,
+		});
+		let message = config.mastodon.messageTemplate
+			.replace(/{channelName}/g, channel.name)
+			.replace(/{title}/g, Discord.Util.escapeMarkdown(videoTitle))
+			.replace(/{url}/g, videoLink);
+		try {
+			var success = await client.post('statuses', { status: message });
+			console.log('[YoutubeMonitor-Mastodon]', `Enviouse actualización a Mastodon da canle: ${channel.name}`);
+		} catch (error) {
+			new FileDatabaseService('live-messages').put('last-error', moment());
+			console.error('[YoutubeMonitor-Mastodon]', `Non se puido enviar o toot da canle ${channel.name}`, error);
 		}
 	}
 }
